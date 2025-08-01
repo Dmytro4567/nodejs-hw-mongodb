@@ -19,11 +19,14 @@
   "homepage": "https://github.com/Dmytro4567/nodejs-hw-mongodb#readme",
   "description": "",
   "dependencies": {
+    "@eslint/js": "^9.32.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "globals": "^16.3.0",
     "mongoose": "^8.17.0",
-    "pino-http": "^10.5.0"
+    "pino-http": "^10.5.0",
+    "pino-pretty": "^13.1.1"
   },
   "devDependencies": {
     "eslint": "^9.32.0",
