@@ -1,5 +1,11 @@
 import createHttpError from 'http-errors';
-import { getAllContacts, getContactById } from '../services/contacts.js';
+import {
+    getAllContacts,
+    getContactById,
+    createContact,
+    updateContactById,
+    deleteContactById,
+} from '../services/contacts.js';
 import mongoose from 'mongoose';
 
 export const getContactsController = async (req, res) => {
@@ -12,7 +18,7 @@ export const getContactsController = async (req, res) => {
 };
 
 export const getContactByIdController = async (req, res) => {
-    const { contactId } = req.params;
+    const {contactId} = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(contactId)) {
         throw createHttpError(404, 'Contact not found');
@@ -31,3 +37,47 @@ export const getContactByIdController = async (req, res) => {
     });
 };
 
+export const createContactController = async (req, res) => {
+    const newContact = await createContact(req.body);
+    res.status(201).json({
+        status: 201,
+        message: 'Successfully created a contact!',
+        data: newContact,
+    });
+};
+
+export const updateContactByIdController = async (req, res) => {
+    const {contactId} = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(contactId)) {
+        throw createHttpError(404, 'Contact not found');
+    }
+
+    const updatedContact = await updateContactById(contactId, req.body);
+
+    if (!updatedContact) {
+        throw createHttpError(404, 'Contact not found');
+    }
+
+    res.status(200).json({
+        status: 200,
+        message: 'Successfully patched a contact!',
+        data: updatedContact,
+    });
+};
+
+export const deleteContactByIdController = async (req, res) => {
+    const {contactId} = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(contactId)) {
+        throw createHttpError(404, 'Contact not found');
+    }
+
+    const deletedContact = await deleteContactById(contactId);
+
+    if (!deletedContact) {
+        throw createHttpError(404, 'Contact not found');
+    }
+
+    res.status(204).send();
+};
