@@ -1,20 +1,19 @@
-import { ContactsCollection } from '../db/models/contact.js';
+import {ContactsCollection} from '../db/models/contact.js';
 
 export const getAllContacts = async (
     page = 1,
     perPage = 10,
     sortBy = 'name',
-    sortOrder = 'asc'
+    sortOrder = 'asc',
+    filter = {}
 ) => {
-    const sortDirection = sortOrder === 'desc' ? -1 : 1;
-
-    const totalItems = await ContactsCollection.countDocuments();
+    const totalItems = await ContactsCollection.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / perPage);
     const hasPreviousPage = page > 1;
     const hasNextPage = page < totalPages;
 
-    const data = await ContactsCollection.find()
-        .sort({ [sortBy]: sortDirection })
+    const data = await ContactsCollection.find(filter)
+        .sort({[sortBy]: sortOrder})
         .skip((page - 1) * perPage)
         .limit(perPage);
 
@@ -28,6 +27,7 @@ export const getAllContacts = async (
         hasNextPage,
     };
 };
+
 
 export const getContactById = async (contactId) => {
     return await ContactsCollection.findById(contactId);

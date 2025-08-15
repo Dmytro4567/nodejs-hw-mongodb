@@ -14,7 +14,17 @@ export const getContactsController = async (req, res) => {
     const sortBy = req.query.sortBy || 'name';
     const sortOrder = req.query.sortOrder || 'asc';
 
-    const paginationResult = await getAllContacts(page, perPage, sortBy, sortOrder);
+    const filter = {};
+
+    if (req.query.type) {
+        filter.contactType = req.query.type;
+    }
+
+    if (req.query.isFavourite !== undefined) {
+        filter.isFavourite = req.query.isFavourite === 'true';
+    }
+
+    const paginationResult = await getAllContacts(page, perPage, sortBy, sortOrder, filter);
 
     res.status(200).json({
         status: 200,
@@ -22,6 +32,7 @@ export const getContactsController = async (req, res) => {
         data: paginationResult,
     });
 };
+
 
 export const getContactByIdController = async (req, res) => {
     const {contactId} = req.params;
