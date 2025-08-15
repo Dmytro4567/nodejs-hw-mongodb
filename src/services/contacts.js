@@ -1,12 +1,20 @@
 import { ContactsCollection } from '../db/models/contact.js';
 
-export const getAllContacts = async (page = 1, perPage = 10) => {
+export const getAllContacts = async (
+    page = 1,
+    perPage = 10,
+    sortBy = 'name',
+    sortOrder = 'asc'
+) => {
+    const sortDirection = sortOrder === 'desc' ? -1 : 1;
+
     const totalItems = await ContactsCollection.countDocuments();
     const totalPages = Math.ceil(totalItems / perPage);
     const hasPreviousPage = page > 1;
     const hasNextPage = page < totalPages;
 
     const data = await ContactsCollection.find()
+        .sort({ [sortBy]: sortDirection })
         .skip((page - 1) * perPage)
         .limit(perPage);
 
