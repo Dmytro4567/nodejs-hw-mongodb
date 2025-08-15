@@ -9,11 +9,15 @@ import {
 import mongoose from 'mongoose';
 
 export const getContactsController = async (req, res) => {
-    const contacts = await getAllContacts();
+    const page = parseInt(req.query.page) || 1;
+    const perPage = parseInt(req.query.perPage) || 10;
+
+    const paginationResult = await getAllContacts(page, perPage);
+
     res.status(200).json({
         status: 200,
         message: 'Successfully found contacts!',
-        data: contacts,
+        data: paginationResult,
     });
 };
 
