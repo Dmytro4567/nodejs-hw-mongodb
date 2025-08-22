@@ -57,3 +57,42 @@ export const loginUser = async ({email, password}) => {
 
     return {accessToken, refreshToken};
 };
+
+export const refreshSession = async (refreshTokenFromClient) => {
+    if (!refreshTokenFromClient) {
+        throw createHttpError(401, 'Refresh token is required');
+    }
+
+    const oldSession = await SessionsCollection.findOne({refreshToken: refreshTokenFromClient});
+
+    if (!oldSession) {
+        throw createHttpError(401, 'Invalid refresh token');
+    }
+
+    if (new Date() > oldSession.refreshTokenValidUntil) {
+        throw createHttpError(401, 'Refresh token expired');
+    }
+
+    const user = await UsersCollection.findById(oldSession.userId);
+
+    if (!user) {
+        throw createHttpError(401, 'User not found');
+    }
+
+    await SessionsCollection.deleteOne({_id: oldSession._id});
+
+    const newAccessToken = randomBytes(30).toString('base64');
+    const newRefreshToken = randomBytes(30).toString('base64');
+
+    await SessionsCollection.create({
+        userId: user._id,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+        refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
+    });
+
+    return {accessToken: newAccessToken, refreshToken: newRefreshToken};
+};
+
+
