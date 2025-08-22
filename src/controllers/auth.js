@@ -1,0 +1,32 @@
+import {registerUser} from '../services/auth.js';
+import {loginUser} from '../services/auth.js';
+import {ONE_DAY} from '../constants/index.js';
+
+export const registerUserController = async (req, res) => {
+    const newUser = await registerUser(req.body);
+
+    res.status(201).json({
+        status: 'success',
+        message: 'Successfully registered a user!',
+        data: newUser,
+    });
+};
+
+export const loginUserController = async (req, res) => {
+    const {accessToken, refreshToken} = await loginUser(req.body);
+
+    res
+        .cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: ONE_DAY,
+        })
+        .status(200)
+        .json({
+            status: 'success',
+            message: 'Successfully logged in an user!',
+            data: {
+                accessToken,
+            },
+        });
+};
