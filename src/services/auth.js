@@ -95,4 +95,19 @@ export const refreshSession = async (refreshTokenFromClient) => {
     return {accessToken: newAccessToken, refreshToken: newRefreshToken};
 };
 
+export const logoutUser = async (refreshToken) => {
+    if (!refreshToken) {
+        throw createHttpError(401, 'Not authorized');
+    }
+
+    const session = await SessionsCollection.findOne({refreshToken});
+
+    if (!session) {
+        throw createHttpError(401, 'Session not found');
+    }
+
+    await SessionsCollection.findByIdAndDelete(session._id);
+};
+
+
 
