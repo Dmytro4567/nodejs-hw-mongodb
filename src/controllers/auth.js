@@ -4,6 +4,12 @@ import {refreshSession} from '../services/auth.js';
 import {logoutUser} from '../services/auth.js';
 import {ONE_DAY} from '../constants/index.js';
 import {requestResetToken} from '../services/auth.js';
+import jwt from "jsonwebtoken";
+import createHttpError from "http-errors";
+import {UsersCollection} from "../db/models/user.js";
+import {SessionsCollection} from "../db/models/session.js";
+import {getEnvVar} from "../utils/getEnvVar.js";
+import bcrypt from "bcrypt";
 
 export const registerUserController = async (req, res) => {
     const newUser = await registerUser(req.body);
@@ -69,6 +75,37 @@ export const requestResetEmailController = async (req, res) => {
     res.status(200).json({
         status: 200,
         message: 'Reset password email has been successfully sent.',
+        data: {},
+    });
+};
+
+export const resetPasswordController = async (req, res) => {
+    const { token, password } = req.body;
+
+    let payload;
+
+    try {
+        payload = jwt.verify(token, getEnvVar('JWT_SECRET'));
+    } catch (error) {
+        throw createHttpError(401, 'Token is expired or invalid.');
+    }
+
+    const user = await UsersCollection.findOne({ email: payload.email });
+    if (!user) {
+        throw createHttpError(404, 'User not found!');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await UsersCollection.findByIdAndUpdate(user._id, {
+        password: hashedPassword,
+    });
+
+    await SessionsCollection.findOneAndDelete({ uid: user._id });
+
+    res.status(200).json({
+        status: 200,
+        message: 'Password has been successfully reset.',
         data: {},
     });
 };
