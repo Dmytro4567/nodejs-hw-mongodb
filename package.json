@@ -22,6 +22,7 @@
   "dependencies": {
     "@eslint/js": "^9.32.0",
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
@@ -32,6 +33,7 @@
     "joi": "^18.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.0",
+    "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
     "pino-http": "^10.5.0",
     "pino-pretty": "^13.1.1"

@@ -1,3 +1,4 @@
+import {saveFileToCloudinary} from '../utils/saveFileToCloudinary.js';
 import createHttpError from 'http-errors';
 import {
     getAllContacts,
@@ -61,7 +62,17 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactController = async (req, res) => {
-    const newContact = await createContact(req.body, req.user._id);
+    const {body, file, user} = req;
+
+    let photoUrl = null;
+    if (file) {
+        photoUrl = await saveFileToCloudinary(file);
+    }
+
+    const newContact = await createContact(
+        {...body, photo: photoUrl},
+        user._id
+    );
 
     res.status(201).json({
         status: 201,
@@ -70,17 +81,24 @@ export const createContactController = async (req, res) => {
     });
 };
 
+
 export const updateContactByIdController = async (req, res) => {
     const {contactId} = req.params;
+    const {body, file, user} = req;
 
     if (!mongoose.Types.ObjectId.isValid(contactId)) {
         throw createHttpError(404, 'Contact not found');
     }
 
+    let photoUrl = null;
+    if (file) {
+        photoUrl = await saveFileToCloudinary(file);
+    }
+
     const updatedContact = await updateContactById(
         contactId,
-        req.body,
-        req.user._id
+        {...body, ...(photoUrl && {photo: photoUrl})},
+        user._id
     );
 
     if (!updatedContact) {
@@ -93,6 +111,7 @@ export const updateContactByIdController = async (req, res) => {
         data: updatedContact,
     });
 };
+
 
 export const deleteContactByIdController = async (req, res) => {
     const {contactId} = req.params;
