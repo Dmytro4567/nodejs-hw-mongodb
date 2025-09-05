@@ -7,7 +7,7 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "This is a backend API for managing personal contacts. It supports full CRUD operations, photo uploads (via Cloudinary), user authentication (email/password & Google OAuth), and password reset via email (SMTP).\n"
+    "description": "This is a backend API for managing personal contacts. It supports full CRUD operations, photo uploads (via Cloudinary), user authentication (email/password), and password reset via email (SMTP).\n"
   },
   "servers": [
     {
