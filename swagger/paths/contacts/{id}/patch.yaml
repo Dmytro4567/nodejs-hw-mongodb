@@ -1,0 +1,63 @@
+tags:
+  - Contacts
+summary: Update contact by ID
+operationId: updateContact
+description: Updates fields of an existing contact
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: The contact ID
+    schema:
+      type: string
+      example: "64f1e3b82f2a3b5c89ab7ef1"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Alice Updated
+          email:
+            type: string
+            format: email
+            example: updated@example.com
+          phoneNumber:
+            type: string
+            example: "+380981234567"
+          isFavourite:
+            type: boolean
+            example: false
+          contactType:
+            type: string
+            enum: [personal, home, work, other]
+            example: work
+responses:
+  '200':
+    description: Contact updated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Contact updated
+            data:
+              $ref: '../../../components/schemas/contact.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'

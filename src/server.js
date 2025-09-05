@@ -8,10 +8,25 @@ import {notFoundHandler} from './middlewares/notFoundHandler.js';
 import {errorHandler} from './middlewares/errorHandler.js';
 import authRouter from './routers/auth.js';
 
+import swaggerUI from 'swagger-ui-express';
+import fs from 'fs';
+import { SWAGGER_PATH } from './constants/index.js';
+
 
 export const setupServer = () => {
     const app = express();
     const PORT = Number(getEnvVar('PORT', '3000'));
+    const swaggerDocs = () => {
+        try {
+            const doc = JSON.parse(fs.readFileSync(SWAGGER_PATH).toString());
+            return [...swaggerUI.serve, swaggerUI.setup(doc)];
+        } catch (e) {
+            return (req, res, next) =>
+                next(createHttpError(500, "Can't load swagger docs"));
+        }
+    };
+
+    app.use('/api-docs', swaggerDocs());
 
     app.use(cors());
     app.use(express.json());

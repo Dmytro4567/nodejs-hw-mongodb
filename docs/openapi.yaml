@@ -1,0 +1,46 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Contacts API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: >
+    This is a backend API for managing personal contacts.
+    It supports full CRUD operations, photo uploads (via Cloudinary),
+    user authentication (email/password & Google OAuth),
+    and password reset via email (SMTP).
+tags:
+  - name: Contacts
+    description: Operations related to user contacts
+  - name: Auth
+    description: User registration and login
+  - name: Password
+    description: Password reset and email confirmation
+servers:
+  - url: http://localhost:3000
+  - url: https://your-project-name.onrender.com
+paths:
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
+  /contacts/{id}:
+    get:
+      $ref: ../swagger/paths/contacts/{id}/get.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{id}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{id}/delete.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/paths/auth/login.yaml
+  /auth/register:
+    post:
+      $ref: ../swagger/paths/auth/register.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

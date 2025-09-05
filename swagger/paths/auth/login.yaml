@@ -1,0 +1,61 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: >
+  Log in a user using email and password.  
+  Returns **access token** in the response body.  
+  **Refresh token** is issued as an httpOnly cookie (Set-Cookie).
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            example: user@example.com
+          password:
+            type: string
+            minLength: 6
+            example: secret123
+responses:
+  '200':
+    description: Successful login
+    headers:
+      Set-Cookie:
+        description: >
+          httpOnly cookie with refresh token (name: `refreshToken`).  
+          Example: `refreshToken=...; HttpOnly; Max-Age=86400; SameSite=Lax`
+        schema:
+          type: string
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: string
+              example: success
+            message:
+              type: string
+              example: Successfully logged in an user!
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: yourAccessTokenHere
+  '401':
+    $ref: '../../components/responses/401.yaml'
