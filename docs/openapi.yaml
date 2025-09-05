@@ -18,8 +18,8 @@ tags:
   - name: Password
     description: Password reset and email confirmation
 servers:
-  - url: http://localhost:3000
   - url: https://hw7-swagger-9s26.onrender.com
+  - url: http://localhost:3000
 paths:
   /contacts:
     get:
